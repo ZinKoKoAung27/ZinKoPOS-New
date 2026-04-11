@@ -949,7 +949,6 @@ function App() {
   useEffect(() => {
     const testConn = async () => {
       try {
-        const { doc, getDocFromServer } = await import('firebase/firestore');
         await getDocFromServer(doc(db, '_connection_test_', 'ping'));
         setIsFirestoreOffline(false);
         setFirestoreError(null);
