@@ -5488,8 +5488,9 @@ function App() {
                   onClick={async () => {
                     const productId = productToDelete;
                     setProductToDelete(null); // Close immediately
+                    if (!productId) return;
                     try {
-                      await deleteDoc(doc(db, 'products', productId));
+                      await deleteProduct(productId);
                     } catch (error) {
                       console.error("Error deleting product:", error);
                     }
@@ -5526,6 +5527,7 @@ function App() {
                   onClick={async () => {
                     const customerId = customerToDelete;
                     setCustomerToDelete(null); // Close immediately
+                    if (!customerId) return;
                     try {
                       await deleteCustomer(customerId);
                     } catch (error) {
@@ -5564,6 +5566,7 @@ function App() {
                   onClick={async () => {
                     const expenseId = expenseToDelete;
                     setExpenseToDelete(null); // Close immediately
+                    if (!expenseId) return;
                     try {
                       await deleteExpense(expenseId);
                     } catch (error) {
@@ -5602,6 +5605,7 @@ function App() {
                   onClick={async () => {
                     const branchId = branchToDelete;
                     setBranchToDelete(null); // Close immediately
+                    if (!branchId) return;
                     try {
                       await deleteDoc(doc(db, 'branches', branchId));
                       setBranchActionSuccess(t.branchDeleted);
