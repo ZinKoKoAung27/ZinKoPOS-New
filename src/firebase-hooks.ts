@@ -50,7 +50,8 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     path
   }
   console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+  // We don't throw here for onSnapshot listeners because it crashes the React app via ErrorBoundary.
+  // We only throw for explicit operations if needed, but for now we'll just log to avoid the "red screen".
 }
 
 export function useFirebaseSync(

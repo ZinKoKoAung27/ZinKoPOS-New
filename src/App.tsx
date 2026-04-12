@@ -891,7 +891,8 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     path
   }
   console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+  // We don't throw here to prevent crashing the app with the ErrorBoundary red screen.
+  // The error is logged and can be handled by the caller if necessary.
 }
 
 export class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
