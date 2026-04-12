@@ -5491,8 +5491,9 @@ function App() {
                     if (!productId) return;
                     try {
                       await deleteProduct(productId);
-                    } catch (error) {
+                    } catch (error: any) {
                       console.error("Error deleting product:", error);
+                      alert("Error deleting product: " + (error.message || error));
                     }
                   }}
                   className="px-6 py-3 text-sm font-black bg-red-500 text-white hover:bg-red-600 rounded-none transition-colors uppercase tracking-widest neo-3d"

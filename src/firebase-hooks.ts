@@ -50,7 +50,7 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     path
   }
   console.error('Firestore Error: ', JSON.stringify(errInfo));
-  // In hooks, we might not want to throw and crash the whole app, but logging is essential.
+  throw new Error(JSON.stringify(errInfo));
 }
 
 export function useFirebaseSync(
@@ -66,29 +66,29 @@ export function useFirebaseSync(
 ) {
   useEffect(() => {
     const unsubProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const productsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setProducts(productsData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'products'));
 
     const unsubSales = onSnapshot(collection(db, 'sales'), (snapshot) => {
-      const salesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const salesData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       salesData.sort((a: any, b: any) => b.timestamp - a.timestamp);
       setSales(salesData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'sales'));
 
     const unsubExpenses = onSnapshot(collection(db, 'expenses'), (snapshot) => {
-      const expensesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const expensesData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       expensesData.sort((a: any, b: any) => b.timestamp - a.timestamp);
       setExpenses(expensesData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'expenses'));
 
     const unsubExpenseCategories = onSnapshot(collection(db, 'expenseCategories'), (snapshot) => {
-      const expenseCategoriesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const expenseCategoriesData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setExpenseCategories(expenseCategoriesData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'expenseCategories'));
 
     const unsubCustomers = onSnapshot(collection(db, 'customers'), (snapshot) => {
-      const customersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const customersData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       customersData.sort((a: any, b: any) => b.createdAt - a.createdAt);
       setCustomers(customersData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'customers'));
@@ -125,12 +125,12 @@ export function useFirebaseSync(
     }, (error) => handleFirestoreError(error, OperationType.GET, 'settings/general'));
 
     const unsubBranches = onSnapshot(collection(db, 'branches'), (snapshot) => {
-      const branchesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const branchesData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setBranches(branchesData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'branches'));
 
     const unsubStaff = onSnapshot(collection(db, 'staffAccounts'), (snapshot) => {
-      const staffData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const staffData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setStaffAccounts(staffData);
     }, (error) => handleFirestoreError(error, OperationType.GET, 'staffAccounts'));
 
