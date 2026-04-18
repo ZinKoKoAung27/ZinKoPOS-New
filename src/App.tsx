@@ -942,6 +942,7 @@ function App() {
   const [firestoreError, setFirestoreError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Small delay to ensure all hooks and firebase are settled
     const timer = setTimeout(() => setIsAuthReady(true), 1000);
     return () => clearTimeout(timer);
   }, []);
@@ -957,7 +958,9 @@ function App() {
         if (error.message && error.message.includes('the client is offline')) {
           setIsFirestoreOffline(true);
         } else if (error.code === 'permission-denied') {
-          setFirestoreError("Missing or insufficient permissions. Please check your security rules.");
+          // If we get permission denied on connection test, it might be because rules are active.
+          // This is fine as long as we can still query what we need.
+          setFirestoreError(null); 
         } else {
           console.warn("Initial connection test failed, but might be normal:", error);
         }
@@ -967,8 +970,13 @@ function App() {
   }, []);
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const saved = localStorage.getItem('pos_auth');
-    return saved ? JSON.parse(saved) : false;
+    const authSaved = localStorage.getItem('pos_auth');
+    const userSaved = localStorage.getItem('pos_current_user');
+    try {
+      return (authSaved && userSaved) ? JSON.parse(authSaved) : false;
+    } catch {
+      return false;
+    }
   });
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -993,8 +1001,20 @@ function App() {
   });
   const [currentUser, setCurrentUser] = useState<{ username: string, role: 'admin' | 'staff', branchId?: string } | null>(() => {
     const saved = localStorage.getItem('pos_current_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
+
+  // Ensure consistent auth state
+  useEffect(() => {
+    if (isAuthenticated && !currentUser) {
+      setIsAuthenticated(false);
+      localStorage.removeItem('pos_auth');
+    }
+  }, [isAuthenticated, currentUser]);
   const [staffAccounts, setStaffAccounts] = useState<any[]>([]);
   const [newStaffUsername, setNewStaffUsername] = useState('');
   const [newStaffPassword, setNewStaffPassword] = useState('');

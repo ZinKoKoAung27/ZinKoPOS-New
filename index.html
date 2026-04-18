@@ -44,10 +44,37 @@
   </head>
   <body>
     <div id="root">
-      <div style="padding: 20px; color: white; background: red; font-family: sans-serif;">
-        If you see this, React failed to load completely. Check browser console for syntax or import errors.
+      <div id="loading-fallback" style="padding: 20px; font-family: sans-serif; text-align: center; color: #475569;">
+        <div style="margin-bottom: 20px; font-weight: bold;">Initializing Z SHOP POS...</div>
+        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+        <div style="margin-top: 20px; font-size: 12px; color: #94a3b8;">If this screen stays for more than 10 seconds, please refresh.</div>
       </div>
     </div>
+    <div id="error-display" style="display: none; position: fixed; top: 0; left: 0; width: 100%; padding: 20px; background: #fee2e2; color: #b91c1c; font-family: monospace; z-index: 9999; font-size: 14px; border-bottom: 2px solid #ef4444; overflow-y: auto; max-height: 50vh; box-sizing: border-box;">
+      <strong>JavaScript Error Detected:</strong>
+      <pre id="error-message" style="margin-top: 10px; white-space: pre-wrap; word-break: break-all; font-size: 12px; border: 1px solid #fecaca; padding: 10px; background: #fff;"></pre>
+      <button onclick="window.location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #b91c1c; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Reload & Try Again</button>
+    </div>
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        var display = document.getElementById('error-display');
+        var msg = document.getElementById('error-message');
+        if (display && msg) {
+          display.style.display = 'block';
+          msg.textContent = message + '\n\nAt: ' + source + ':' + lineno + ':' + colno + '\n\nStack Trace:\n' + (error ? error.stack : 'N/A');
+        }
+        return false;
+      };
+      window.onunhandledrejection = function(event) {
+        var display = document.getElementById('error-display');
+        var msg = document.getElementById('error-message');
+        if (display && msg) {
+          display.style.display = 'block';
+          msg.textContent = 'Unhandled Promise Rejection:\n' + event.reason;
+        }
+      };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
